@@ -4,9 +4,9 @@ import { useField } from "../hooks";
 const CreateNew = ({ addNew }) => {
 	const navigate = useNavigate();
 
-	const content = useField("text");
-	const author = useField("text");
-	const info = useField("text");
+	const { onReset: resetContent, ...content } = useField("text");
+	const { onReset: resetAuthor, ...author } = useField("text");
+	const { onReset: resetInfo, ...info } = useField("text");
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -19,38 +19,31 @@ const CreateNew = ({ addNew }) => {
 		navigate("/");
 	};
 
+	const handleReset = (e) => {
+		e.preventDefault();
+		resetContent();
+		resetAuthor();
+		resetInfo();
+	};
+
 	return (
 		<div>
 			<h2>create a new anecdote</h2>
 			<form onSubmit={handleSubmit}>
 				<div>
 					content
-					<input
-						name="content"
-						type={content.type}
-						value={content.value}
-						onChange={content.onChange}
-					/>
+					<input name="content" {...content} />
 				</div>
 				<div>
 					author
-					<input
-						name="author"
-						type={author.type}
-						value={author.value}
-						onChange={author.onChange}
-					/>
+					<input name="author" {...author} />
 				</div>
 				<div>
 					url for more info
-					<input
-						name="info"
-						type={info.type}
-						value={info.value}
-						onChange={info.onChange}
-					/>
+					<input name="info" {...info} />
 				</div>
 				<button>create</button>
+				<button onClick={handleReset}>reset</button>
 			</form>
 		</div>
 	);
