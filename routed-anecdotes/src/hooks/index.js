@@ -28,10 +28,14 @@ export const useAnecdotes = () => {
 	}, []);
 
 	const addAnecdote = async (anecdote) => {
-		anecdoteService
-			.createNew(anecdote)
-			.then((data) => setAnecdotes(anecdotes.concat(data)));
+		const newAnecdote = await anecdoteService.createNew(anecdote);
+		setAnecdotes(anecdotes.concat(newAnecdote));
 	};
 
-	return { anecdotes, addAnecdote };
+	const deleteAnecdote = async (id) => {
+		await anecdoteService.remove(id);
+		setAnecdotes(anecdotes.filter((a) => a.id !== id));
+	};
+
+	return { anecdotes, addAnecdote, deleteAnecdote };
 };
