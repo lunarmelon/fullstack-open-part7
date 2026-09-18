@@ -118,6 +118,7 @@ const App = () => {
 			<Notification className="notification" notification={notification} />
 			<ErrorBoundary>
 				<Routes>
+					<Route path="/*" element={<h1>404 - Page not found</h1>} />
 					<Route path="/create" element={<BlogForm createBlog={addBlog} />} />
 					<Route
 						path="/blogs/:id"
