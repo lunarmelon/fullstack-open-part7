@@ -7,16 +7,18 @@ import BlogList from "./components/BlogList";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
+import { useNotificationsActions } from "./notificationStore";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
 	const [blogs, setBlogs] = useState([]);
-	const [notification, setNotification] = useState(null);
+	//const [notification, setNotification] = useState(null);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [user, setUser] = useState(null);
 	const navigate = useNavigate();
+	const { setNotification } = useNotificationsActions();
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -31,13 +33,13 @@ const App = () => {
 	const addBlog = (blogObject) => {
 		blogService.create(blogObject).then((returnedBlog) => {
 			setBlogs(blogs.concat(returnedBlog));
-			setNotification({
-				text: `a new blog ${blogObject.title} by ${blogObject.author} added`,
-				type: "success",
-			});
-			setTimeout(() => {
-				setNotification(null);
-			}, 4000);
+			// setNotification({
+			// 	text: `a new blog ${blogObject.title} by ${blogObject.author} added`,
+			// 	type: "success",
+			// });
+			// setTimeout(() => {
+			// 	setNotification(null);
+			// }, 4000);
 		});
 		navigate("/");
 	};
@@ -66,14 +68,14 @@ const App = () => {
 			setUsername("");
 			setPassword("");
 			navigate("/");
-			setNotification({ text: `${user.name} logged in`, type: "success" });
+			setNotification(`${user.name} logged in`, "success");
 			setTimeout(() => {
-				setNotification(null);
+				setNotification(null, null);
 			}, 5000);
 		} catch {
-			setNotification({ text: "wrong credentials", type: "error" });
+			setNotification("wrong credentials", "error");
 			setTimeout(() => {
-				setNotification(null);
+				setNotification(null, null);
 			}, 5000);
 		}
 	};
@@ -115,7 +117,7 @@ const App = () => {
 					)}
 				</Toolbar>
 			</AppBar>
-			<Notification className="notification" notification={notification} />
+			<Notification className="notification" />
 			<ErrorBoundary>
 				<Routes>
 					<Route path="/*" element={<h1>404 - Page not found</h1>} />
