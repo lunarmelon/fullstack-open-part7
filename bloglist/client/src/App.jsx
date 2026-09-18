@@ -4,6 +4,7 @@ import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import BlogList from "./components/BlogList";
+import ErrorBoundary from "./components/ErrorBoundary";
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
@@ -115,47 +116,49 @@ const App = () => {
 				</Toolbar>
 			</AppBar>
 			<Notification className="notification" notification={notification} />
-			<Routes>
-				<Route path="/create" element={<BlogForm createBlog={addBlog} />} />
-				<Route
-					path="/blogs/:id"
-					element={
-						<Blog
-							blog={blog}
-							addLike={updateBlog}
-							removeBlog={deleteBlog}
-							user={user}
-						/>
-					}
-				/>
-				<Route
-					path="/login"
-					element={
-						!user && (
-							<LoginForm
-								handleLogin={handleLogin}
-								username={username}
-								password={password}
-								handleUsername={({ target }) => setUsername(target.value)}
-								handlePassword={({ target }) => setPassword(target.value)}
-							/>
-						)
-					}
-				/>
-				<Route
-					path="/"
-					element={
-						<div className="bloglist">
-							<BlogList
-								blogs={blogs}
-								updateBlog={updateBlog}
-								deleteBlog={deleteBlog}
+			<ErrorBoundary>
+				<Routes>
+					<Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+					<Route
+						path="/blogs/:id"
+						element={
+							<Blog
+								blog={blog}
+								addLike={updateBlog}
+								removeBlog={deleteBlog}
 								user={user}
 							/>
-						</div>
-					}
-				/>
-			</Routes>
+						}
+					/>
+					<Route
+						path="/login"
+						element={
+							!user && (
+								<LoginForm
+									handleLogin={handleLogin}
+									username={username}
+									password={password}
+									handleUsername={({ target }) => setUsername(target.value)}
+									handlePassword={({ target }) => setPassword(target.value)}
+								/>
+							)
+						}
+					/>
+					<Route
+						path="/"
+						element={
+							<div className="bloglist">
+								<BlogList
+									blogs={blogs}
+									updateBlog={updateBlog}
+									deleteBlog={deleteBlog}
+									user={user}
+								/>
+							</div>
+						}
+					/>
+				</Routes>
+			</ErrorBoundary>
 		</Container>
 	);
 };
