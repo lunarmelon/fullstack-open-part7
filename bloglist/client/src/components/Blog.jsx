@@ -1,8 +1,11 @@
 import { Button, Card, CardContent, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useBlogActions } from "../blogStore";
 
-const Blog = ({ blog, addLike, removeBlog, user }) => {
+const Blog = ({ blog, user }) => {
 	const id = useParams().id;
+	const { like, remove } = useBlogActions();
+	const navigate = useNavigate();
 
 	if (!blog) {
 		return null;
@@ -10,24 +13,11 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
 
 	const isCreator = user?.id === blog.user || user?.id === blog.user?.id;
 
-	const updateBlog = (event) => {
-		event.preventDefault();
-		addLike(
-			{
-				user: blog?.user?._id,
-				likes: blog.likes + 1,
-				author: blog.author,
-				title: blog.title,
-				url: blog.url,
-			},
-			id,
-		);
-	};
-
 	const deleteBlog = (event) => {
 		event.preventDefault();
 		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-			removeBlog(id);
+			remove(id);
+			navigate("/");
 		}
 	};
 
@@ -45,7 +35,7 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
 					{user && (
 						<Button
 							color="inherit"
-							onClick={updateBlog}
+							onClick={() => like(blog.id)}
 							sx={{
 								color: "blue",
 								borderColor: "blue",

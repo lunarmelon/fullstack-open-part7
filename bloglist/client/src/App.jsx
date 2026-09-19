@@ -13,14 +13,13 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
-	//const [notification, setNotification] = useState(null);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [user, setUser] = useState(null);
-	const navigate = useNavigate();
-	const { setNotification } = useNotificationsActions();
 	const blogs = useBlogs();
 	const { initialize } = useBlogActions();
+	const { setNotification } = useNotificationsActions();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -31,19 +30,6 @@ const App = () => {
 		}
 		initialize();
 	}, [initialize]);
-
-	const updateBlog = (blogObject, id) => {
-		blogService.update(blogObject, id).then((returnedBlog) => {
-			setBlogs(blogs.map((blog) => (blog.id === id ? returnedBlog : blog)));
-			blogService.getAll().then((blogs) => setBlogs(blogs));
-		});
-	};
-
-	const deleteBlog = (id) => {
-		blogService.remove(id);
-		blogService.getAll().then((blogs) => setBlogs(blogs));
-		navigate("/");
-	};
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -110,17 +96,7 @@ const App = () => {
 				<Routes>
 					<Route path="/*" element={<h1>404 - Page not found</h1>} />
 					<Route path="/create" element={<BlogForm />} />
-					<Route
-						path="/blogs/:id"
-						element={
-							<Blog
-								blog={blog}
-								addLike={updateBlog}
-								removeBlog={deleteBlog}
-								user={user}
-							/>
-						}
-					/>
+					<Route path="/blogs/:id" element={<Blog blog={blog} user={user} />} />
 					<Route
 						path="/login"
 						element={
@@ -139,12 +115,7 @@ const App = () => {
 						path="/"
 						element={
 							<div className="bloglist">
-								<BlogList
-									blogs={blogs}
-									updateBlog={updateBlog}
-									deleteBlog={deleteBlog}
-									user={user}
-								/>
+								<BlogList blogs={blogs} user={user} />
 							</div>
 						}
 					/>
