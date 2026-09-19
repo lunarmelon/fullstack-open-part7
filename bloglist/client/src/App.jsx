@@ -1,5 +1,5 @@
 import { AppBar, Button, Container, Toolbar } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
 import { useBlogActions, useBlogs } from "./blogStore";
 import Blog from "./components/Blog";
@@ -8,57 +8,23 @@ import BlogList from "./components/BlogList";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
-import { useNotificationsActions } from "./notificationStore";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
+import { useUser, useUserActions } from "./userStore";
 
 const App = () => {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [user, setUser] = useState(null);
 	const blogs = useBlogs();
+	const user = useUser();
 	const { initialize } = useBlogActions();
-	const { setNotification } = useNotificationsActions();
+	const { initializeUser, logout } = useUserActions();
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-		if (loggedUserJSON) {
-			const user = JSON.parse(loggedUserJSON);
-			setUser(user);
-			blogService.setToken(user.token);
-		}
+		initializeUser();
 		initialize();
-	}, [initialize]);
-
-	const handleLogin = async (event) => {
-		event.preventDefault();
-
-		try {
-			const user = await loginService.login({ username, password });
-			window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-			blogService.setToken(user.token);
-			setUser(user);
-			setUsername("");
-			setPassword("");
-			navigate("/");
-			setNotification(`${user.name} logged in`, "success");
-			setTimeout(() => {
-				setNotification(null, null);
-			}, 5000);
-		} catch {
-			setNotification("wrong credentials", "error");
-			setTimeout(() => {
-				setNotification(null, null);
-			}, 5000);
-		}
-	};
+	}, [initializeUser, initialize]);
 
 	const handleLogout = async (event) => {
 		event.preventDefault();
-		window.localStorage.removeItem("loggedBlogappUser");
-		setUser(null);
-		blogService.setToken(null);
+		await logout();
 		navigate("/login");
 	};
 
@@ -97,20 +63,7 @@ const App = () => {
 					<Route path="/*" element={<h1>404 - Page not found</h1>} />
 					<Route path="/create" element={<BlogForm />} />
 					<Route path="/blogs/:id" element={<Blog blog={blog} user={user} />} />
-					<Route
-						path="/login"
-						element={
-							!user && (
-								<LoginForm
-									handleLogin={handleLogin}
-									username={username}
-									password={password}
-									handleUsername={({ target }) => setUsername(target.value)}
-									handlePassword={({ target }) => setPassword(target.value)}
-								/>
-							)
-						}
-					/>
+					<Route path="/login" element={!user && <LoginForm />} />
 					<Route
 						path="/"
 						element={

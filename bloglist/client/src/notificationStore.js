@@ -15,3 +15,4 @@ export const useNotificationMessage = () =>
 	useNotificationStore((state) => state.message);
 export const useNotificationType = () =>
 	useNotificationStore((state) => state.type);
+export default useNotificationStore;
