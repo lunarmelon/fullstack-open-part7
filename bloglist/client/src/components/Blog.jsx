@@ -10,14 +10,6 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
 
 	const isCreator = user?.id === blog.user || user?.id === blog.user?.id;
 
-	const blogStyle = {
-		paddingTop: 10,
-		paddingLeft: 2,
-		border: "solid",
-		borderWidth: 1,
-		marginBottom: 5,
-	};
-
 	const updateBlog = (event) => {
 		event.preventDefault();
 		addLike(
@@ -39,8 +31,6 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
 		}
 	};
 
-	const buttonStyle = { background: "rgb(255, 0, 0)" };
-
 	return (
 		<div className="blog">
 			<Card variant="outlined" sx={{ marginTop: 1 }}>
@@ -57,10 +47,10 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
 							color="inherit"
 							onClick={updateBlog}
 							sx={{
-								color: "blue", // Matches text color
-								borderColor: "blue", // Matches border color
-								borderWidth: 1, // Slightly thicker border to match the image
-								borderRadius: "5px", // Subtle rounded corners
+								color: "blue",
+								borderColor: "blue",
+								borderWidth: 1,
+								borderRadius: "5px",
 								borderStyle: "solid",
 								margin: 1,
 							}}
@@ -72,10 +62,10 @@ const Blog = ({ blog, addLike, removeBlog, user }) => {
 						<Button
 							onClick={deleteBlog}
 							sx={{
-								color: "red", // Matches text color
-								borderColor: "red", // Matches border color
-								borderWidth: 1, // Slightly thicker border to match the image
-								borderRadius: "5px", // Subtle rounded corners
+								color: "red",
+								borderColor: "red",
+								borderWidth: 1,
+								borderRadius: "5px",
 								borderStyle: "solid",
 								margin: 1,
 							}}

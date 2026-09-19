@@ -1,6 +1,7 @@
 import { AppBar, Button, Container, Toolbar } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link, Route, Routes, useMatch, useNavigate } from "react-router-dom";
+import { useBlogActions, useBlogs } from "./blogStore";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import BlogList from "./components/BlogList";
@@ -12,13 +13,14 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
-	const [blogs, setBlogs] = useState([]);
 	//const [notification, setNotification] = useState(null);
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [user, setUser] = useState(null);
 	const navigate = useNavigate();
 	const { setNotification } = useNotificationsActions();
+	const blogs = useBlogs();
+	const { initialize } = useBlogActions();
 
 	useEffect(() => {
 		const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -27,22 +29,8 @@ const App = () => {
 			setUser(user);
 			blogService.setToken(user.token);
 		}
-		blogService.getAll().then((blogs) => setBlogs(blogs));
-	}, []);
-
-	const addBlog = (blogObject) => {
-		blogService.create(blogObject).then((returnedBlog) => {
-			setBlogs(blogs.concat(returnedBlog));
-			// setNotification({
-			// 	text: `a new blog ${blogObject.title} by ${blogObject.author} added`,
-			// 	type: "success",
-			// });
-			// setTimeout(() => {
-			// 	setNotification(null);
-			// }, 4000);
-		});
-		navigate("/");
-	};
+		initialize();
+	}, [initialize]);
 
 	const updateBlog = (blogObject, id) => {
 		blogService.update(blogObject, id).then((returnedBlog) => {
@@ -121,7 +109,7 @@ const App = () => {
 			<ErrorBoundary>
 				<Routes>
 					<Route path="/*" element={<h1>404 - Page not found</h1>} />
-					<Route path="/create" element={<BlogForm createBlog={addBlog} />} />
+					<Route path="/create" element={<BlogForm />} />
 					<Route
 						path="/blogs/:id"
 						element={
