@@ -1,18 +1,20 @@
 import { Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useField } from "../hooks";
 import { useUserActions } from "../userStore";
 
 const LoginForm = () => {
+	const username = useField("text");
+	const password = useField("password");
 	const { login } = useUserActions();
 	const navigate = useNavigate();
 
-	const handleLogin = (event) => {
+	const handleLogin = async (event) => {
 		event.preventDefault();
-		const username = event.target.username.value;
-		const password = event.target.password.value;
-		login(username, password);
+		await login(username.value, password.value);
+		username.onReset();
+		password.onReset();
 		navigate("/");
-		event.target.reset();
 	};
 
 	return (
@@ -20,11 +22,18 @@ const LoginForm = () => {
 			<h2>Login</h2>
 			<form onSubmit={handleLogin}>
 				<div>
-					<TextField name="username" label="username" />
+					<TextField
+						type={username.type}
+						value={username.value}
+						onChange={username.onChange}
+						label="username"
+					/>
 				</div>
 				<div>
 					<TextField
-						name="password"
+						type={password.type}
+						value={password.value}
+						onChange={password.onChange}
 						label="password"
 						style={{ marginTop: 10 }}
 					/>
